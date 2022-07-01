@@ -6,7 +6,7 @@ import sys
 import textwrap
 import threading
 
-def excute(cmd):
+def execute(cmd):
     cmd = cmd.strip()
     if not cmd:
         return
@@ -36,7 +36,7 @@ class NetCat:
                 recv_len = 1
                 response = ''
                 while recv_len:
-                    data = slf.socket.recv(4096)
+                    data = self.socket.recv(4096)
                     recv_len = len(data)
                     response += data.decode()
                     if recv_len < 4096:
@@ -48,23 +48,24 @@ class NetCat:
                     self.socket.send(buffer.encode())
         except KeyboardInterrupt:
             print('User terminated.')
-            self.socket.closee()
+            self.socket.close()
             sys.exit()
 
     def listen(self):
         self.socket.bind((self.args.target, self.args.port))
         self.socket.listen(5)
         while True:
-            client_socket, = self.socket.accept()
-            client_thread = theading.Thread(
+            client_socket, _ = self.socket.accept()
+            client_thread = threading.Thread(
                     target=self.handle, args=(client_socket,)
                     )
             client_thread.start()
 
-    def handle(self):
+    def handle(self, client_socket):
         if self.args.execute:
             output = execute(self.args.execute)
             client_socket.send(output.encode())
+
         elif self.args.upload:
             file_buffer = b''
             while True:
@@ -80,16 +81,16 @@ class NetCat:
             client_socket.send(message.encode())
 
         elif self.args.command:
-            cmd_buffer = b''
+            cmd_buffer = b""
             while True:
                 try:
                     client_socket.send(b'BHP: #> ')
-                    while '\n' in cmd_buffer.decode():
+                    while '\n' not in cmd_buffer.decode():
                         cmd_buffer += client_socket.recv(64)
                     response = execute(cmd_buffer.decode())
                     if response:
                         client_socket.send(response.encode())
-                    cmd_buffer = b''
+                    cmd_buffer = b""
                 except Exception as e:
                     print(f'server killed {e}')
                     self.socket.close()
