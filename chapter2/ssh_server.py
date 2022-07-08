@@ -4,8 +4,10 @@ import socket
 import sys
 import threading
 
+
 CWD = os.path.dirname(os.path.realpath(__file__))
-HOSTKEY = paramiko.RSAKey(filename = os.path.join(CWD, 'test_rsa.key'))
+HOSTKEY = paramiko.RSAKey(filename=os.path.join(CWD, 'test_rsa.key'))
+
 
 class Server(paramiko.ServerInterface):
     def __init__(self):
@@ -20,12 +22,13 @@ class Server(paramiko.ServerInterface):
         if ((username == 'tim') and (password == 'sekret')):
             return paramiko.AUTH_SUCCESSFUL
 
+
 if __name__ == '__main__':
     server = '192.168.0.100'
     ssh_port = 2222
     try:
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sokc.setsockport(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        sock.setsockport(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         sock.bind((server, ssh_port))
         sock.listen(100)
         print("[+] Listening for connection...")
@@ -39,7 +42,7 @@ if __name__ == '__main__':
     bhSession = paramiko.Transport(client)
     bhSession.add_server_key(HOSTKEY)
     server = Server()
-    bdSession.start_server(server=server)
+    bhSession.start_server(server=server)
 
     chan = bhSession.accept(20)
     if chan is None:

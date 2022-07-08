@@ -1,5 +1,6 @@
 import paramiko
 
+
 def ssh_command(ip, port, user, passwd, cmd):
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -12,9 +13,10 @@ def ssh_command(ip, port, user, passwd, cmd):
         for line in output:
             print(line.strip())
 
+
 if __name__ == '__main__':
     import getpass
-    #user = getpass.getuser()
+    # user = getpass.getuser()
     user = input("Username: ")
     password = getpass.getpass()
 
