@@ -1,11 +1,13 @@
 import cv2
 import os
 
-ROOT = '~/Desktop/pic'
-FACES = '~/Desktop/faces'
-TRAIN = '~/Desktop/training'
 
-def detect(srcdir=ROOT, tgtdir=FACES, tain_dir=TRAIN):
+ROOT = '/Users/kirillurusov/Desktop/pic'
+FACES = '/Users/kirillurusov/Desktop/faces'
+TRAIN = '/Users/kirillurusov/Desktop/training'
+
+
+def detect(srcdir=ROOT, tgtdir=FACES, train_dir=TRAIN):
     for fname in os.listdir(srcdir):
         if not fname.upper().endswith('.JPEG'):
             continue
@@ -17,8 +19,9 @@ def detect(srcdir=ROOT, tgtdir=FACES, tain_dir=TRAIN):
 
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         training = os.path.join(train_dir,
-                'haarcascade_frontalface_alt.xml')
-        cascade = cascade.detectMultiScale(gray, 1.3, 5)
+                                'haarcascade_frontalface_alt.xml')
+        cascade = cv2.CascadeClassifier(training)
+        rects = cascade.detectMultiScale(gray, 1.3, 5)
         try:
             if rects.any():
                 print('Got a face')
@@ -28,8 +31,9 @@ def detect(srcdir=ROOT, tgtdir=FACES, tain_dir=TRAIN):
             continue
 
         for x1, y1, x2, y2 in rects:
-            cv2.rectangle(imp, (x1, y1), (x2, y2), (127, 255, 0), 2)
+            cv2.rectangle(img, (x1, y1), (x2, y2), (127, 255, 0), 2)
             cv2.imwrite(newname, img)
+
 
 if __name__ == '__main__':
     detect()

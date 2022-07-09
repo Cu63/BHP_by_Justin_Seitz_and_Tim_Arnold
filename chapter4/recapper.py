@@ -5,10 +5,12 @@ import re
 import sys
 import zlib
 
-OUTDIR = '~/Desktop/pic'
-PCAPS = '~/Downloads/'
+
+OUTDIR = '/Users/kirillurusov/Desktop/pic'
+PCAPS = '/Users/kirillurusov/Downloads/'
 
 Response = collections.namedtuple('Response', ['header', 'payload'])
+
 
 def get_header(payload):
     try:
@@ -19,10 +21,11 @@ def get_header(payload):
         return None
 
     header = dict(re.findall(r'(?P<name>.*?): (?P<value>.*?)\r\n',
-        header_raw.decode()))
+                  header_raw.decode()))
     if 'Content-Type' not in header:
         return None
     return header
+
 
 def extract_content(Response, content_name='image'):
     content, content_type = None, None
@@ -38,12 +41,13 @@ def extract_content(Response, content_name='image'):
 
     return content, content_type
 
+
 class Recapper:
     def __init__(self, fname):
         pcap = rdpcap(fname)
         self.sessions = pcap.sessions()
         self.responses = list()
-        
+
     def get_responses(self):
         for session in self.sessions:
             payload = b''
@@ -60,15 +64,16 @@ class Recapper:
                 if header is None:
                     continue
                 self.responses.append(Response(header=header, payload=payload))
-        
+
     def write(self, content_name):
-        for i, respone in enumerate(self.responses):
+        for i, response in enumerate(self.responses):
             content, content_type = extract_content(response, content_name)
             if content and content_type:
                 fname = os.path.join(OUTDIR, f'ex_{i}.{content_type}')
                 print(f'Writing {fname}')
                 with open(fname, 'wb') as f:
                     f.write(content)
+
 
 if __name__ == "__main__":
     pfile = os.path.join(PCAPS, 'pcap.pcap')
